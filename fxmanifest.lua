@@ -6,6 +6,9 @@ description 'An optimized interaction system for FiveM, based on qtarget'
 version '5.5.0'
 
 ui_page 'html/index.html'
+shared_scripts {
+   '@es_extended/imports.lua'
+}
 
 client_scripts {
 	'@PolyZone/client.lua',
