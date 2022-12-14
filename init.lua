@@ -142,12 +142,16 @@ CreateThread(function()
 	else
 		
 		local PlayerData = ESX.GetPlayerData()
-        local identifier = ESX.GetPlayerFromId()
 		ItemCheck = function(item)
-			('item:Checker', item)
-        end
-				
-				
+		   ESX.TriggerServerCallback('item:Checker',function(item)
+                      if item then
+                         return true
+                      else
+                         return false
+                      end
+                   end, item)
+                end
+		
 		JobCheck = function(job)
 			if type(job) == 'table' then
 				job = job[PlayerData.job.name]
