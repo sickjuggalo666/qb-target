@@ -140,17 +140,20 @@ CreateThread(function()
 			Wait(1000)
 		end
 	else
-		local QBCore = exports['qb-core']:GetCoreObject()
-		local PlayerData = QBCore.Functions.GetPlayerData()
-
-		ItemCheck = QBCore.Functions.HasItem
-
+		
+		local PlayerData = ESX.GetPlayerData()
+        local identifier = ESX.GetPlayerFromId()
+		ItemCheck = function(item)
+			('item:Checker', item)
+        end
+				
+				
 		JobCheck = function(job)
 			if type(job) == 'table' then
 				job = job[PlayerData.job.name]
-				if job and PlayerData.job.grade.level >= job then
+				if job and PlayerData.job.grade >= job then
 					return true
-				end
+				
 			elseif job == 'all' or job == PlayerData.job.name then
 				return true
 			end
@@ -159,11 +162,11 @@ CreateThread(function()
 
 		JobTypeCheck = function(jobType)
 			if type(jobType) == 'table' then
-				jobType = jobType[PlayerData.job.type]
+				jobType = jobType[PlayerData.job]
 				if jobType then
 					return true
 				end
-			elseif jobType == 'all' or jobType == PlayerData.job.type then
+			elseif jobType == 'all' or jobType == PlayerData.job then
 				return true
 			end
 			return false
@@ -171,31 +174,31 @@ CreateThread(function()
 
 		GangCheck = function(gang)
 			if type(gang) == 'table' then
-				gang = gang[PlayerData.gang.name]
-				if gang and PlayerData.gang.grade.level >= gang then
+				gang = gang[PlayerData.job.name]
+				if gang and PlayerData.job.grade >= gang then
 					return true
 				end
-			elseif gang == 'all' or gang == PlayerData.gang.name then
+			elseif gang == 'all' or gang == PlayerData.job.name then
 				return true
 			end
 			return false
 		end
 
 		CitizenCheck = function(citizenid)
-			return citizenid == PlayerData.citizenid or citizenid[PlayerData.citizenid]
+			return citizenid == PlayerData.id or ESX.GetPlayerId()
 		end
 
-		RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-			PlayerData = QBCore.Functions.GetPlayerData()
+		RegisterNetEvent('esx:playerLoaded', function()
+			PlayerData = ESX.GetPlayerData()
 			SpawnPeds()
 		end)
 
-		RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
+		RegisterNetEvent('esx:playerLogout', function()
 			PlayerData = {}
 			DeletePeds()
 		end)
 
-		RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+		RegisterNetEvent('esx:setJob', function(JobInfo)
 			PlayerData.job = JobInfo
 		end)
 
@@ -203,7 +206,7 @@ CreateThread(function()
 			PlayerData.gang = GangInfo
 		end)
 
-		RegisterNetEvent('QBCore:Player:SetPlayerData', function(val)
+		RegisterNetEvent('esx:setPlayerData', function(val)
 			PlayerData = val
 		end)
 	end
